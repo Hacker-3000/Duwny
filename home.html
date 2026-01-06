@@ -1,0 +1,20 @@
+<script>
+    // 1. فحص الأمان: إذا لم يسجل الدخول، اطرده لصفحة الدخول
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+        window.location.replace("index.html");
+    }
+
+    // --- بقية الأكواد الخاصة بك لعرض الزبائن والبيانات تظل هنا ---
+    
+    let customers = JSON.parse(localStorage.getItem('customers')) || [];
+    // ... (كل الكود الخاص بك يوضع هنا) ...
+
+    // 2. دالة تسجيل الخروج المعدلة
+    function logout() {
+        if (confirm("هل تريد تسجيل الخروج؟ سيطلب منك كلمة السر في المرة القادمة.")) {
+            // مسح علامة تسجيل الدخول
+            localStorage.removeItem('isLoggedIn');
+            window.location.replace("index.html");
+        }
+    }
+</script>
