@@ -5,35 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول</title>
     <style>
-        /* التنسيق الحالي الخاص بك (لا تغيير فيه) */
         body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f4f6f8; margin: 0; }
         .login-box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 80%; max-width: 320px; }
         input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 10px; text-align: center; font-size: 18px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; border: none; background: #2e7d32; color: white; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button { width: 100%; padding: 12px; border: none; background: #2e7d32; color: white; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .setup-link { margin-top: 15px; font-size: 14px; color: #555; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <h2>أهلاً بك</h2>
+    <div class="login-box" id="login-section">
+        <h2 id="title">تسجيل الدخول</h2>
         <input type="password" id="pin-input" placeholder="أدخل كلمة السر" inputmode="numeric">
         <button onclick="checkPin()">دخول</button>
+        <div id="setup-area"></div>
     </div>
 
     <script>
-        // ميزة البقاء مسجلاً: الفحص عند تحميل الصفحة
         window.onload = function() {
-            if (localStorage.getItem('isLoggedIn') === 'true') {
+            const savedPin = localStorage.getItem('userPin');
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            // إذا لم يكن هناك كلمة سر محفوظة نهائياً (أول مرة يفتح التطبيق)
+            if (!savedPin) {
+                showSetup(); 
+            } 
+            // إذا كان هناك حساب ومسجل دخول مسبقاً، اذهب للرئيسية
+            else if (isLoggedIn === 'true') {
                 window.location.replace("home.html");
             }
         };
 
+        function showSetup() {
+            document.getElementById('title').innerText = "إنشاء حساب جديد";
+            document.getElementById('pin-input').placeholder = "اختر كلمة سر جديدة";
+            const btn = document.querySelector('button');
+            btn.innerText = "إنشاء الحساب";
+            btn.onclick = createAccount;
+        }
+
+        function createAccount() {
+            const pin = document.getElementById('pin-input').value;
+            if (pin.length >= 4) {
+                localStorage.setItem('userPin', pin);
+                localStorage.setItem('isLoggedIn', 'true'); // تسجيل دخول تلقائي بعد الإنشاء
+                alert("تم إنشاء الحساب بنجاح!");
+                window.location.replace("home.html");
+            } else {
+                alert("يرجى إدخال 4 أرقام على الأقل");
+            }
+        }
+
         function checkPin() {
             const enteredPin = document.getElementById('pin-input').value;
-            // جلب كلمة السر المحفوظة أو استخدام الافتراضية
             const savedPin = localStorage.getItem('userPin') || "1234";
 
             if (enteredPin === savedPin) {
-                // حفظ الجلسة ليبقى مسجلاً
                 localStorage.setItem('isLoggedIn', 'true');
                 window.location.replace("home.html");
             } else {
